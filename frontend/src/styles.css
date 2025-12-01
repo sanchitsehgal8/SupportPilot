@@ -1,0 +1,15 @@
+body{font-family:Inter, Roboto, Arial, sans-serif;background:#f6f8fb;margin:0}
+.page{padding:24px}
+.auth-page{display:flex;align-items:center;justify-content:center;height:100vh}
+.auth-form{background:white;padding:32px;border-radius:8px;box-shadow:0 4px 20px rgba(0,0,0,0.05);width:360px}
+.auth-form input{width:100%;padding:10px;margin:8px 0;border:1px solid #e6e9ee;border-radius:6px}
+.auth-form button{width:100%;padding:10px;background:#2563eb;color:white;border:none;border-radius:6px}
+.ticket-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.ticket-card{background:white;padding:12px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.04)}
+.ticket-header{display:flex;justify-content:space-between;align-items:center}
+.status{padding:4px 8px;border-radius:4px;font-size:12px}
+.status.open{background:#f1f5f9}
+.status.in_progress{background:#fff7ed}
+.chart-card{background:white;padding:12px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.04);margin-bottom:12px}
+.error{background:#fee2e2;color:#991b1b;padding:8px;border-radius:6px}
+.muted{color:#6b7280;font-size:14px;margin-top:8px}
