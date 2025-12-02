@@ -3,6 +3,7 @@ import api from '../api/client'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 
 const COLORS = ['#16a34a', '#f59e0b', '#ef4444']
+const PLACEHOLDER_COLORS = ['#29323a', '#38444b', '#4b5960']
 
 export default function AdminDashboard(){
   const [stats, setStats] = useState(null)
@@ -42,20 +43,23 @@ export default function AdminDashboard(){
 
           <div className="chart-card">
             <h4>😊 Sentiment Distribution</h4>
-            {hasSentimentData ? (
-              <ResponsiveContainer width="100%" height={220}>
-                <PieChart>
-                  <Pie dataKey="value" data={[{name:'positive', value: sentiment.positive},{name:'neutral', value: sentiment.neutral},{name:'negative', value: sentiment.negative}]}>
-                    {[{name:'positive'},{name:'neutral'},{name:'negative'}].map((entry, idx) => (
-                      <Cell key={`cell-${idx}`} fill={COLORS[idx % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="no-data">No sentiment data yet. Create tickets to see analytics!</div>
-            )}
+            <ResponsiveContainer width="100%" height={220}>
+              <PieChart>
+                <Pie
+                  dataKey="value"
+                  data={hasSentimentData ? [{name:'positive', value: sentiment.positive},{name:'neutral', value: sentiment.neutral},{name:'negative', value: sentiment.negative}] : [{name:'positive', value:1},{name:'neutral', value:1},{name:'negative', value:1}]}
+                  innerRadius={50}
+                  outerRadius={90}
+                  paddingAngle={3}
+                >
+                  {(hasSentimentData ? [{},{},{}] : [{},{},{}]).map((entry, idx) => (
+                    <Cell key={`cell-${idx}`} fill={(hasSentimentData ? COLORS : PLACEHOLDER_COLORS)[idx % 3]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+            {!hasSentimentData && <div className="no-data">No sentiment data yet. Create tickets to see analytics!</div>}
           </div>
         </div>
       )}

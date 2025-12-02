@@ -108,6 +108,14 @@ def create_app():
         if not auth_controller:
             return ErrorHandler.internal_error('Auth service unavailable')
         return auth_controller.register(request.get_json() or {})
+
+    @app.route('/api/auth/create-agent', methods=['POST'])
+    @require_auth
+    @require_role('admin')
+    def create_agent():
+        if not auth_controller:
+            return ErrorHandler.internal_error('Auth service unavailable')
+        return auth_controller.create_agent(request.get_json() or {})
     
     @app.route('/api/auth/login', methods=['POST'])
     def login():
@@ -220,6 +228,18 @@ def create_app():
         if not analytics_controller:
             return ErrorHandler.internal_error('Analytics service unavailable')
         return analytics_controller.get_all_agents_performance()
+
+    @app.route('/api/users/agents', methods=['GET'])
+    @require_auth
+    @require_role('admin')
+    def list_user_agents():
+        if not user_service:
+            return ErrorHandler.internal_error('User service unavailable')
+        try:
+            agents = user_service.get_agents()
+            return ErrorHandler.success_response({'agents': agents})
+        except Exception as e:
+            return ErrorHandler.internal_error(str(e))
     
     @app.route('/api/analytics/agents/<agent_id>', methods=['GET'])
     @require_auth

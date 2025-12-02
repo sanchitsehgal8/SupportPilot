@@ -129,6 +129,49 @@ class AuthController:
             'email': payload['email']
         }, 'Token refreshed')
 
+    def create_agent(self, request_data: dict):
+        """Create an agent user profile without returning an auth token.
+        This is intended for admin workflows where issuing a token is not desired.
+        """
+        email = request_data.get('email', '').strip()
+        password = request_data.get('password', '')
+        name = request_data.get('name', '').strip()
+        role = 'agent'
+
+        # Validate inputs (reuse same validators)
+        valid, msg = Validators.validate_email(email)
+        if not valid:
+            return ErrorHandler.bad_request(msg)
+
+        valid, msg = Validators.validate_password(password)
+        if not valid:
+            return ErrorHandler.bad_request(msg)
+
+        valid, msg = Validators.validate_name(name)
+        if not valid:
+            return ErrorHandler.bad_request(msg)
+
+        # Check if user exists in database
+        existing = self.user_service.get_user_by_email(email)
+        if existing:
+            return ErrorHandler.conflict('Email already registered')
+
+        try:
+            user_id = str(uuid.uuid4())
+            result = self.user_service.create_user(user_id, email, name, role)
+            if result['success']:
+                # Return created user object WITHOUT token
+                return ErrorHandler.created_response({
+                    'user_id': user_id,
+                    'email': email,
+                    'name': name,
+                    'role': role
+                }, 'Agent created successfully')
+            else:
+                return ErrorHandler.internal_error(result.get('error'))
+        except Exception as e:
+            return ErrorHandler.internal_error(f'Create agent failed: {str(e)}')
+
 
 def require_auth(f):
     """Decorator to require authentication"""
